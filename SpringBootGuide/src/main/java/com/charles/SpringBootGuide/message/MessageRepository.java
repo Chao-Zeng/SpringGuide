@@ -2,9 +2,11 @@ package com.charles.SpringBootGuide.message;
 
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.core.*;
+import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
 
+@Repository
 public class MessageRepository {
 
     @Resource(name = "redisTemplate")

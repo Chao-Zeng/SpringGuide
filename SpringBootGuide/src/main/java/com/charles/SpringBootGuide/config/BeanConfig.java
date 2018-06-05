@@ -3,15 +3,24 @@ package com.charles.SpringBootGuide.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisSentinelConfiguration;
+import org.springframework.data.redis.connection.jedis.JedisClientConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLParameters;
+import javax.net.ssl.SSLSocketFactory;
+import java.time.Duration;
+import java.util.Optional;
+
 @Configuration
+@Import({PropertyConfig.class})
 public class BeanConfig {
 
     private final PropertyConfig propertyConfig;
@@ -24,13 +33,14 @@ public class BeanConfig {
     /**
      * jedis, not thread safe. need use connection pool in multi-thread env
      */
-    @Bean
-    public RedisConnectionFactory jedisConnectionFactory() {
-        RedisSentinelConfiguration sentinelConfig = new RedisSentinelConfiguration()
-                .master("mymaster")
-                .sentinel(propertyConfig.getRedisIp(), propertyConfig.getRedisPort());
-        return new JedisConnectionFactory(sentinelConfig);
-    }
+//    @Bean
+//    public RedisConnectionFactory jedisConnectionFactory() {
+//        RedisSentinelConfiguration sentinelConfig = new RedisSentinelConfiguration()
+//                .master(propertyConfig.getRedisMasterName())
+//                .sentinel(propertyConfig.getRedisIp(), propertyConfig.getRedisPort());
+//
+//        return new JedisConnectionFactory(sentinelConfig);
+//    }
 
     /**
      * lettuce, base netty, non-blocking, thread safe
@@ -38,7 +48,7 @@ public class BeanConfig {
     @Bean
     public RedisConnectionFactory lettuceConnectionFactory() {
         RedisSentinelConfiguration sentinelConfig = new RedisSentinelConfiguration()
-                .master("mymaster")
+                .master(propertyConfig.getRedisMasterName())
                 .sentinel(propertyConfig.getRedisIp(), propertyConfig.getRedisPort());
         return  new LettuceConnectionFactory(sentinelConfig);
     }
