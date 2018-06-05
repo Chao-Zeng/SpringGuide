@@ -4,6 +4,9 @@ public class Message {
     Integer id;
     String content;
 
+    public Message() {
+    }
+
     public Message(Integer id, String content) {
         this.id = id;
         this.content = content;

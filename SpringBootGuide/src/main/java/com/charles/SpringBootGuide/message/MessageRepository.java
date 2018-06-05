@@ -19,6 +19,7 @@ public class MessageRepository {
         redisTemplate.execute(new SessionCallback<Object>() {
             @Override
             public Object execute(RedisOperations operations) throws DataAccessException {
+                operations.multi();
                 operations.opsForValue().set(String.valueOf(message.getId()), message);
                 return operations.exec();
             }

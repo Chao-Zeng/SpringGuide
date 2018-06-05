@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisSentinelConfiguration;
+import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisClientConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
@@ -47,10 +48,7 @@ public class BeanConfig {
      */
     @Bean
     public RedisConnectionFactory lettuceConnectionFactory() {
-        RedisSentinelConfiguration sentinelConfig = new RedisSentinelConfiguration()
-                .master(propertyConfig.getRedisMasterName())
-                .sentinel(propertyConfig.getRedisIp(), propertyConfig.getRedisPort());
-        return  new LettuceConnectionFactory(sentinelConfig);
+        return  new LettuceConnectionFactory(new RedisStandaloneConfiguration(propertyConfig.getRedisIp(), propertyConfig.getRedisPort()));
     }
 
     @Bean

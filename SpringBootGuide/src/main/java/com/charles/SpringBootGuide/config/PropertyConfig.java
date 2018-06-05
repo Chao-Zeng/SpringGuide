@@ -16,9 +16,6 @@ public class PropertyConfig {
     @NotNull
     private  int redisPort;
 
-    @NotEmpty
-    private String redisMasterName;
-
     public String getRedisIp() {
         return redisIp;
     }
@@ -33,13 +30,5 @@ public class PropertyConfig {
 
     public void setRedisPort(short redisPort) {
         this.redisPort = redisPort;
-    }
-
-    public String getRedisMasterName() {
-        return redisMasterName;
-    }
-
-    public void setRedisMasterName(String redisMasterName) {
-        this.redisMasterName = redisMasterName;
     }
 }
