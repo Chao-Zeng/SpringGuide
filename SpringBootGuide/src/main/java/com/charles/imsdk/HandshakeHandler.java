@@ -11,7 +11,20 @@ public class HandshakeHandler extends ByteToMessageDecoder {
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
+        System.out.println("connect server " + ctx.channel().remoteAddress());
         super.channelActive(ctx);
+        int version = 1;
+        int magic = 123456;
+        int cmd = 3;
+        String body = "this is a test";
+        int bodyLen = body.length();
+        ByteBuf buf = ctx.alloc().buffer();
+        buf.writeInt(version);
+        buf.writeInt(magic);
+        buf.writeInt(cmd);
+        buf.writeInt(bodyLen);
+        buf.writeBytes(body.getBytes());
+        ctx.writeAndFlush(buf);
     }
 
     /**
@@ -26,11 +39,28 @@ public class HandshakeHandler extends ByteToMessageDecoder {
      */
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
-        if (in.readableBytes() < 1) {
+        if (in.readableBytes() < 16) {
             return;
         }
 
         in.markReaderIndex();
+        int version = in.readInt();
+        int magic = in.readInt();
+        int cmd = in.readInt();
+        int bodyLen = in.readInt();
+        System.out.println("version=" + version);
+        System.out.println("magic=" + magic);
+        System.out.println("cmd=" + cmd);
+        System.out.println("bodyLen=" + bodyLen);
 
+        if (in.readableBytes() < bodyLen) {
+            in.resetReaderIndex();
+            return;
+        }
+
+        byte[] body = new byte[bodyLen];
+        in.readBytes(body);
+        String content = new String(body);
+        System.out.println("body:" + content);
     }
 }
